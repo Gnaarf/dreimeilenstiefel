@@ -146,7 +146,7 @@ public class Tile : MonoBehaviour
 
             default:
             case MatchCheckDirection.both:
-                return CheckIfMatchExists(MatchCheckDirection.horizontal) && CheckIfMatchExists(MatchCheckDirection.vertical);
+                return CheckIfMatchExists(MatchCheckDirection.horizontal) || CheckIfMatchExists(MatchCheckDirection.vertical);
         }
 
         List<GameObject> matchingTiles = new List<GameObject>();

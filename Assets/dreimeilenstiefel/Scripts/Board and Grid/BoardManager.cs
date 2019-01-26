@@ -51,7 +51,7 @@ public class BoardManager : MonoBehaviour
         CreateBoard(offset.x, offset.y, new Vector2Int(xSize / 2 - 1, ySize / 2 - 1));
     }
 
-    bool didCheckAlready = false;
+    bool didCheckAlready = true;
 
     private void Update()
     {
@@ -69,11 +69,14 @@ public class BoardManager : MonoBehaviour
         {
             didCheckAlready = true;
 
-            bool possibleMoveExists = CheckForPossibleMoves();
+            Vector2Int possibleMoveIndices;
+            bool possibleMoveExists = CheckForPossibleMoves(out possibleMoveIndices);
 
+            print(possibleMoveExists ? "found possible move at " + possibleMoveIndices : "no possible move found");
+            
             if (!possibleMoveExists)
             {
-                print("no possible move - reshuffle");
+                // make pop up window
 
                 Vector2 offset = tile.GetComponent<SpriteRenderer>().bounds.size;
 
@@ -81,7 +84,7 @@ public class BoardManager : MonoBehaviour
                 {
                     for (int y = 0; y < ySize; y++)
                     {
-                        DestroyImmediate(tiles[x, y]);
+                        DestroyImmediate(tiles[x, y].gameObject);
                     }
                 }
 
@@ -89,11 +92,9 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
-
-    private bool CheckForPossibleMoves()
+    
+    private bool CheckForPossibleMoves(out Vector2Int indices)
     {
-        bool result = false;
-
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
@@ -106,22 +107,25 @@ public class BoardManager : MonoBehaviour
 
                 foreach (Tile neighbour in neighbours)
                 {
-                    currentTile.spriteRenderer.sprite = neighbour.spriteRenderer.sprite;
+                    SwapTiles(currentTile, neighbour);
 
-                    if (currentTile.CheckIfMatchExists(Tile.MatchCheckDirection.both))
+                    bool matchExists = currentTile.CheckIfMatchExists(Tile.MatchCheckDirection.both);
+
+                    SwapTiles(currentTile, neighbour);
+
+                    if (matchExists)
                     {
-                        result = true;
+                        indices = new Vector2Int(x, y);
 
-                        print("found possible move");
-                        // show pop up that no moves are possible
+                        return true;
                     }
                 }
-
-                currentTile.spriteRenderer.sprite = cachedSprite;
             }
         }
 
-        return result;
+        indices = new Vector2Int(-1, -1);
+
+        return false;
     }
 
     private void CreateBoard(float xOffset, float yOffset, Vector2Int playerStartCoordinates)
