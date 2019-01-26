@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour {
 
 	public float fadeSpeed = .02f;
 
-	private Color fadeTransparency = new Color(0, 0, 0, .04f);
+
+    private Color fadeTransparency = new Color(0, 0, 0, .04f);
 	private string currentScene;
 	private AsyncOperation async;
 

@@ -27,9 +27,12 @@ using System.Collections.Generic;
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager instance;
+    public float shiftDelay = 0.1F;
+    public bool cheatMode = false;
     public Tile playerTileTemplate;
     public Tile playerTile { get; set; }
     public Sprite emptySprite;
+    public Sprite movableSprite;
     public List<Sprite> characters = new List<Sprite>();
     public Tile tile;
     public int xSize, ySize;
@@ -46,6 +49,14 @@ public class BoardManager : MonoBehaviour
 
         Vector2 offset = tile.GetComponent<SpriteRenderer>().bounds.size;
         CreateBoard(offset.x, offset.y);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            cheatMode = !cheatMode;
+        }
     }
 
     private void CreateBoard(float xOffset, float yOffset)
@@ -143,21 +154,24 @@ public class BoardManager : MonoBehaviour
 
     public IEnumerator FindNullTiles()
     {
-
         Vector2Int playerPos = GetCoordinates(playerTile);
 
         if (tiles[(int)playerPos.x, (int)playerPos.y].GetAllAdjacentTiles().Exists(t => t != null && t.spriteRenderer.sprite == emptySprite))
         {
+             List<Tile> movableTiles = new List<Tile>(GetMovableTiles());
+
+            movableTiles.ForEach(t => t.spriteRenderer.sprite = movableSprite);
+
             IsPlayerMoving = true;
             while (MovingPlayerTarget == null)
             {
                 yield return new WaitForEndOfFrame();
             }
 
-            tiles[(int)playerPos.x, (int)playerPos.y].GetAllAdjacentTiles().ForEach(t => { if (t != null) t.spriteRenderer.color = Color.white; });
-
             Vector2Int movingplayerTargetPos = GetCoordinates(MovingPlayerTarget);
             SwapTiles(playerTile, MovingPlayerTarget);
+            
+            movableTiles.ForEach(t => t.spriteRenderer.sprite = emptySprite);
 
             IsPlayerMoving = false;
             MovingPlayerTarget = null;
@@ -184,7 +198,30 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ShiftTilesDown(int x, int yStart, float shiftDelay = .1f)
+    private HashSet<Tile> GetMovableTiles()
+    {
+        HashSet<Tile> activeTiles = new HashSet<Tile>(playerTile.GetAllAdjacentTiles(false).FindAll(t => t.spriteRenderer.sprite == emptySprite));
+        List<Tile> cachedToAdd = new List<Tile>();
+        int activeTileCount = 0;
+
+        do
+        {
+            cachedToAdd.Clear();
+            activeTileCount = activeTiles.Count;
+
+            foreach(Tile tile in activeTiles)
+            {
+                cachedToAdd.AddRange(tile.GetAllAdjacentTiles(false).FindAll(t => t.spriteRenderer.sprite == emptySprite));
+            }
+
+            cachedToAdd.ForEach(t => activeTiles.Add(t));
+
+        } while (activeTiles.Count > activeTileCount);
+        
+        return activeTiles;
+    }
+
+    private IEnumerator ShiftTilesDown(int x, int yStart)
     {
         IsShifting = true;
         List<Vector2> tilePositions = new List<Vector2>();
