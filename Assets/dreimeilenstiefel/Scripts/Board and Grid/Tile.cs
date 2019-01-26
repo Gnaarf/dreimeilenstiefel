@@ -102,6 +102,7 @@ public class Tile : MonoBehaviour
                     {
                         BoardManager.instance.SwapTiles(this, previousSelected);
                         SFXManager.instance.PlaySFX(Clip.Duck);
+                        GUIManager.instance.MoveCounter++;
                     }
                     previousSelected.Deselect();
 
