@@ -14,6 +14,8 @@ Falke
 
 ## Special Thanks To
 
-quack.wav (Reitanna)
+Quack Sound (Reitanna)
 
-project base (Jeff Fisher)
+Environment Art (Black Hammer)
+
+Project Base (Jeff Fisher)
