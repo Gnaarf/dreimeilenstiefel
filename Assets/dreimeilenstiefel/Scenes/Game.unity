@@ -696,9 +696,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3e5bbfb8c13d8f479f8d00fcbc7884e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTileTemplate: {fileID: 4087067206923495640, guid: f7f0eb78eeac19f408615b18d689509b,
+  playerTileTemplate: {fileID: 4087067206923495640, guid: 171cb73e167d61b4087c94a4a42bbc63,
     type: 3}
-  playerTile: {fileID: 0}
   emptySprite: {fileID: 21300000, guid: 1c48a8ca92ec3f5438e6c345d6f1a7d4, type: 3}
   characters:
   - {fileID: 21300000, guid: 093363a40d9c07a4082e1c0f82d20fc3, type: 3}
