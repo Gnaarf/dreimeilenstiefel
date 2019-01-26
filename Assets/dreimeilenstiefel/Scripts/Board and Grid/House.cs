@@ -18,13 +18,14 @@ public class House : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isSpawnned)
-       Debug.Log(Vector3.Distance(houseLocation, GameObject.FindGameObjectWithTag("Player").transform.position));
-        if (Vector3.Distance(houseLocation, GameObject.FindGameObjectWithTag("Player").transform.position) < 0.68f)
-        {
-            Debug.Log("Game Over");
+        float distanceToHome = 0;
+        //Update Distance To Home
+        if (isSpawnned)
+            distanceToHome = Vector3.Distance(houseLocation, GameObject.FindGameObjectWithTag("Player").transform.position);
+
+        //Check if player reached home
+        if (isSpawnned && distanceToHome < 0.68f)
             GUIManager.instance.GameOver();
-        }
     }
 
     private bool SpawnHouse()
