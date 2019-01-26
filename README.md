@@ -1,4 +1,4 @@
-# Dreimeilenstiefel
+# Dreimeilenstiefel (Three-League Boots)
 
 # Credits
 
