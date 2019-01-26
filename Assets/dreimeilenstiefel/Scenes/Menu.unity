@@ -319,6 +319,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb9c3aa0fa5cc314ab86ca0bcc68ad01, type: 3}
+--- !u!1 &712998283 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 161678, guid: eb9c3aa0fa5cc314ab86ca0bcc68ad01,
+    type: 3}
+  m_PrefabInstance: {fileID: 712998282}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &712998284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712998283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a649463c0585bc4495508b60d062a62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cursorTexture: {fileID: 2800000, guid: ebf4045d20078574490eb90cfd67e036, type: 3}
+  cursorMode: 0
+  hotSpot: {x: 0, y: 0}
 --- !u!1001 &1630870145
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -398,5 +419,15 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11450528, guid: 5c55d6b169136be438c65bd97e4f3a67, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011935413962, guid: 5c55d6b169136be438c65bd97e4f3a67,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f895c8dc0c229334b9f19afc31f468ca,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c55d6b169136be438c65bd97e4f3a67, type: 3}
