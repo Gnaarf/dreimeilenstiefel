@@ -24,33 +24,38 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Tile : MonoBehaviour {
-	private static Color selectedColor = new Color(.5f, .5f, .5f, 1.0f);
-	private static Tile previousSelected = null;
+public class Tile : MonoBehaviour
+{
+    private static Color selectedColor = new Color(.5f, .5f, .5f, 1.0f);
+    private static Tile previousSelected = null;
 
-	public SpriteRenderer spriteRenderer;
-	private bool isSelected = false;
+    public SpriteRenderer spriteRenderer;
+    private bool isSelected = false;
 
-	private Vector2[] adjacentDirections = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
+    private Vector2[] adjacentDirections = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
 
-	void Awake() {
-		spriteRenderer = GetComponent<SpriteRenderer>();
+    void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-	private void Select() {
-		isSelected = true;
-		spriteRenderer.color = selectedColor;
-		previousSelected = gameObject.GetComponent<Tile>();
-		SFXManager.instance.PlaySFX(Clip.Select);
-	}
+    private void Select()
+    {
+        isSelected = true;
+        spriteRenderer.color = selectedColor;
+        previousSelected = gameObject.GetComponent<Tile>();
+        SFXManager.instance.PlaySFX(Clip.Select);
+    }
 
-	private void Deselect() {
-		isSelected = false;
-		spriteRenderer.color = Color.white;
-		previousSelected = null;
-	}
+    private void Deselect()
+    {
+        isSelected = false;
+        spriteRenderer.color = Color.white;
+        previousSelected = null;
+    }
 
-	void OnMouseDown() {
+    void OnMouseDown()
+    {
         if (BoardManager.instance.IsPlayerMoving)
         {
             print(spriteRenderer.sprite.name);
@@ -62,85 +67,105 @@ public class Tile : MonoBehaviour {
         }
 
         // Not Selectable conditions
-        if (spriteRenderer.sprite == BoardManager.instance.emptySprite || this == BoardManager.instance.playerTile || BoardManager.instance.IsShifting) {
-			return;
-		}
+        if (spriteRenderer.sprite == BoardManager.instance.emptySprite || this == BoardManager.instance.playerTile || BoardManager.instance.IsShifting)
+        {
+            return;
+        }
 
-		if (isSelected) { // Is it already selected?
-			Deselect();
-		} else {
-			if (previousSelected == null) { // Is it the first tile selected?
-				Select();
-			} else {
-				if (GetAllAdjacentTiles().Contains(previousSelected)) // Is it an adjacent tile?
+        if (isSelected)
+        { // Is it already selected?
+            Deselect();
+        }
+        else
+        {
+            if (previousSelected == null)
+            { // Is it the first tile selected?
+                Select();
+            }
+            else
+            {
+                if (GetAllAdjacentTiles().Contains(previousSelected)) // Is it an adjacent tile?
                 {
                     SFXManager.instance.PlaySFX(Clip.Swap);
                     GUIManager.instance.MoveCounter--; // Add this line here
 
                     BoardManager.instance.SwapTiles(this, previousSelected);
-					previousSelected.ClearAllMatches();
-					previousSelected.Deselect();
-					ClearAllMatches();
+                    previousSelected.ClearAllMatches();
+                    previousSelected.Deselect();
+                    ClearAllMatches();
 
-				} else {
-					previousSelected.GetComponent<Tile>().Deselect();
-					Select();
-				}
-			}
-		}
-	}
+                }
+                else
+                {
+                    previousSelected.GetComponent<Tile>().Deselect();
+                    Select();
+                }
+            }
+        }
+    }
 
-	private Tile GetAdjacent(Vector2 castDir) {
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, castDir);
-		if (hit.collider != null) {
-			return hit.collider.gameObject.GetComponent<Tile>();
-		}
-		return null;
-	}
+    private Tile GetAdjacent(Vector2 castDir)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, castDir);
+        if (hit.collider != null)
+        {
+            return hit.collider.gameObject.GetComponent<Tile>();
+        }
+        return null;
+    }
 
-	public List<Tile> GetAllAdjacentTiles() {
-		List<Tile> adjacentTiles = new List<Tile>();
-		for (int i = 0; i < adjacentDirections.Length; i++) {
-			adjacentTiles.Add(GetAdjacent(adjacentDirections[i]));
-		}
-		return adjacentTiles;
-	}
+    public List<Tile> GetAllAdjacentTiles()
+    {
+        List<Tile> adjacentTiles = new List<Tile>();
+        for (int i = 0; i < adjacentDirections.Length; i++)
+        {
+            adjacentTiles.Add(GetAdjacent(adjacentDirections[i]));
+        }
+        return adjacentTiles;
+    }
 
-	private List<GameObject> FindMatch(Vector2 castDir) {
-		List<GameObject> matchingTiles = new List<GameObject>();
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, castDir);
-		while (hit.collider != null && hit.collider.GetComponent<SpriteRenderer>().sprite == spriteRenderer.sprite) {
-			matchingTiles.Add(hit.collider.gameObject);
-			hit = Physics2D.Raycast(hit.collider.transform.position, castDir);
-		}
-		return matchingTiles;
-	}
+    private List<GameObject> FindMatch(Vector2 castDir)
+    {
+        List<GameObject> matchingTiles = new List<GameObject>();
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, castDir);
+        while (hit.collider != null && hit.collider.GetComponent<SpriteRenderer>().sprite == spriteRenderer.sprite)
+        {
+            matchingTiles.Add(hit.collider.gameObject);
+            hit = Physics2D.Raycast(hit.collider.transform.position, castDir);
+        }
+        return matchingTiles;
+    }
 
-	private void ClearMatch(Vector2[] paths) {
-		List<GameObject> matchingTiles = new List<GameObject>();
-		for (int i = 0; i < paths.Length; i++) { matchingTiles.AddRange(FindMatch(paths[i])); }
-		if (matchingTiles.Count >= 2) {
-			for (int i = 0; i < matchingTiles.Count; i++) {
-				matchingTiles[i].GetComponent<SpriteRenderer>().sprite = BoardManager.instance.emptySprite;
-			}
-			matchFound = true;
-		}
-	}
+    private void ClearMatch(Vector2[] paths)
+    {
+        List<GameObject> matchingTiles = new List<GameObject>();
+        for (int i = 0; i < paths.Length; i++) { matchingTiles.AddRange(FindMatch(paths[i])); }
+        if (matchingTiles.Count >= 2)
+        {
+            for (int i = 0; i < matchingTiles.Count; i++)
+            {
+                matchingTiles[i].GetComponent<SpriteRenderer>().sprite = BoardManager.instance.emptySprite;
+            }
+            matchFound = true;
+        }
+    }
 
-	private bool matchFound = false;
-	public void ClearAllMatches() {
-		if (spriteRenderer.sprite == BoardManager.instance.emptySprite)
-			return;
+    private bool matchFound = false;
+    public void ClearAllMatches()
+    {
+        if (spriteRenderer.sprite == BoardManager.instance.emptySprite)
+            return;
 
-		ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
-		ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
-		if (matchFound) {
-			spriteRenderer.sprite = BoardManager.instance.emptySprite;
-			matchFound = false;
-			StopCoroutine(BoardManager.instance.FindNullTiles()); //Add this line
-			StartCoroutine(BoardManager.instance.FindNullTiles()); //Add this line
-			SFXManager.instance.PlaySFX(Clip.Clear);
-		}
-	}
+        ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
+        ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
+        if (matchFound)
+        {
+            spriteRenderer.sprite = BoardManager.instance.emptySprite;
+            matchFound = false;
+            StopCoroutine(BoardManager.instance.FindNullTiles()); //Add this line
+            StartCoroutine(BoardManager.instance.FindNullTiles()); //Add this line
+            SFXManager.instance.PlaySFX(Clip.Clear);
+        }
+    }
 
 }
