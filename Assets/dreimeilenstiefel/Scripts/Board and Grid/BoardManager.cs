@@ -68,7 +68,7 @@ public class BoardManager : MonoBehaviour
         if (!IsPlayerMoving && !IsShifting && !didCheckAlready)
         {
             didCheckAlready = true;
-            
+
             bool possibleMoveExists = CheckForPossibleMoves();
 
             if (!possibleMoveExists)
@@ -76,6 +76,15 @@ public class BoardManager : MonoBehaviour
                 print("no possible move - reshuffle");
 
                 Vector2 offset = tile.GetComponent<SpriteRenderer>().bounds.size;
+
+                for (int x = 0; x < xSize; x++)
+                {
+                    for (int y = 0; y < ySize; y++)
+                    {
+                        DestroyImmediate(tiles[x, y]);
+                    }
+                }
+
                 CreateBoard(offset.x, offset.y, GetCoordinates(playerTile));
             }
         }
