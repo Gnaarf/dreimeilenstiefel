@@ -225,16 +225,17 @@ public class BoardManager : MonoBehaviour
     {
         IsShifting = true;
         List<Vector2> tilePositions = new List<Vector2>();
-        int nullCount = 0;
 
         for (int y = yStart; y < ySize; y++)
         {
             Tile tile = this.tiles[x, y];
-            if (tile.spriteRenderer.sprite == emptySprite)
-            {
-                nullCount++;
-            }
             tilePositions.Add(new Vector2(x, y));
+        }
+
+        int nullCount = 0;
+        while (nullCount < tilePositions.Count && tiles[(int)tilePositions[nullCount].x, (int)tilePositions[nullCount].y].spriteRenderer.sprite == emptySprite)
+        {
+            nullCount++;
         }
 
         Vector2 lastTilePos = tilePositions[tilePositions.Count - 1];
@@ -250,10 +251,14 @@ public class BoardManager : MonoBehaviour
             for (int k = 0; k < tilePositions.Count - 1; k++)
             {
                 yield return new WaitForSeconds(shiftDelay);
-                if (tiles[(int)tilePositions[k + 1].x, (int)tilePositions[k + 1].y] == playerTile && k + 2 < tilePositions.Count - 1)
+                if (tiles[(int)tilePositions[k + 1].x, (int)tilePositions[k + 1].y] == playerTile && k + 2 < tilePositions.Count)
                 {
                     SwapTiles((int)tilePositions[k].x, (int)tilePositions[k].y, (int)tilePositions[k + 2].x, (int)tilePositions[k + 2].y);
                     k++;
+                }
+                else if (tiles[(int)tilePositions[k].x, (int)tilePositions[k].y] == playerTile)
+                {
+                    // do nothing
                 }
                 else
                 {
