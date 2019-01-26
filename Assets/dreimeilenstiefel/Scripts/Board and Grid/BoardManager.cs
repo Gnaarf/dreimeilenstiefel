@@ -94,10 +94,13 @@ public class BoardManager : MonoBehaviour
 
         if (playerTileTemplate != null)
         {
-            playerTile = Instantiate(playerTileTemplate, tiles[0, 0].transform.position, playerTileTemplate.transform.rotation);
+            int xMedian = xSize / 2;
+            int yMedian = ySize / 2;
+
+            playerTile = Instantiate(playerTileTemplate, tiles[xMedian, yMedian].transform.position, playerTileTemplate.transform.rotation);
             playerTile.transform.parent = transform;
-            DestroyImmediate(tiles[0, 0].gameObject);
-            tiles[0, 0] = playerTile;
+            DestroyImmediate(tiles[xMedian, yMedian].gameObject);
+            tiles[xMedian, yMedian] = playerTile;
         }
     }
 
