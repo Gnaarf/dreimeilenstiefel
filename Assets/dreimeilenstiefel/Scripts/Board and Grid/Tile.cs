@@ -59,7 +59,7 @@ public class Tile : MonoBehaviour
         if (BoardManager.instance.IsPlayerMoving)
         {
             print(spriteRenderer.sprite.name);
-            if (spriteRenderer.sprite == BoardManager.instance.movableSprite)
+            if (spriteRenderer.sprite == BoardManager.instance.movableSprite || this == BoardManager.instance.playerTile)
             {
                 BoardManager.instance.MovingPlayerTarget = this;
             }
@@ -116,11 +116,41 @@ public class Tile : MonoBehaviour
         }
     }
 
+    public enum MatchCheckDirection
+    {
+        horizontal,
+        vertical,
+        both
+    }
 
-    private bool CheckIfMatchExists(Vector2[] paths)
+    public bool CheckIfMatchExists(Vector2[] paths)
     {
         List<GameObject> matchingTiles = new List<GameObject>();
         for (int i = 0; i < paths.Length; i++) { matchingTiles.AddRange(FindMatch(paths[i])); }
+        return matchingTiles.Count >= 2;
+    }
+
+    public bool CheckIfMatchExists(MatchCheckDirection direction)
+    {
+        Vector2[] directionVectors;
+
+        switch (direction)
+        {
+            case MatchCheckDirection.horizontal:
+                directionVectors = new Vector2[2] { Vector2.left, Vector2.right };
+                break;
+
+            case MatchCheckDirection.vertical:
+                directionVectors = new Vector2[2] { Vector2.up, Vector2.down };
+                break;
+
+            default:
+            case MatchCheckDirection.both:
+                return CheckIfMatchExists(MatchCheckDirection.horizontal) && CheckIfMatchExists(MatchCheckDirection.vertical);
+        }
+
+        List<GameObject> matchingTiles = new List<GameObject>();
+        for (int i = 0; i < directionVectors.Length; i++) { matchingTiles.AddRange(FindMatch(directionVectors[i])); }
         return matchingTiles.Count >= 2;
     }
 

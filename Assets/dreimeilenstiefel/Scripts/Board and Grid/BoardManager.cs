@@ -48,8 +48,10 @@ public class BoardManager : MonoBehaviour
         instance = GetComponent<BoardManager>();
 
         Vector2 offset = tile.GetComponent<SpriteRenderer>().bounds.size;
-        CreateBoard(offset.x, offset.y);
+        CreateBoard(offset.x, offset.y, new Vector2Int(xSize / 2 - 1, ySize / 2 - 1));
     }
+
+    bool didCheckAlready = false;
 
     private void Update()
     {
@@ -57,9 +59,63 @@ public class BoardManager : MonoBehaviour
         {
             cheatMode = !cheatMode;
         }
+
+        if(IsPlayerMoving || IsShifting)
+        {
+            didCheckAlready = false;
+        }
+
+        if (!IsPlayerMoving && !IsShifting && !didCheckAlready)
+        {
+            didCheckAlready = true;
+            
+            bool possibleMoveExists = CheckForPossibleMoves();
+
+            if (!possibleMoveExists)
+            {
+                print("no possible move - reshuffle");
+
+                Vector2 offset = tile.GetComponent<SpriteRenderer>().bounds.size;
+                CreateBoard(offset.x, offset.y, GetCoordinates(playerTile));
+            }
+        }
     }
 
-    private void CreateBoard(float xOffset, float yOffset)
+    private bool CheckForPossibleMoves()
+    {
+        bool result = false;
+
+        for (int x = 0; x < xSize; x++)
+        {
+            for (int y = 0; y < ySize; y++)
+            {
+                Tile currentTile = tiles[x, y];
+
+                Sprite cachedSprite = currentTile.spriteRenderer.sprite;
+
+                List<Tile> neighbours = currentTile.GetAllAdjacentTiles(false);
+
+                foreach (Tile neighbour in neighbours)
+                {
+                    currentTile.spriteRenderer.sprite = neighbour.spriteRenderer.sprite;
+
+                    if (currentTile.CheckIfMatchExists(Tile.MatchCheckDirection.both))
+                    {
+                        result = true;
+
+                        print("found possible move");
+                        // show pop up that no moves are possible
+                    }
+                }
+
+                currentTile.spriteRenderer.sprite = cachedSprite;
+            }
+        }
+
+        return result;
+    }
+
+    private void CreateBoard(float xOffset, float yOffset, Vector2Int playerStartCoordinates)
     {
         tiles = new Tile[xSize, ySize];
 
@@ -73,8 +129,6 @@ public class BoardManager : MonoBehaviour
         {
             for (int y = 0; y < ySize; y++)
             {
-
-
                 Tile newTile = Instantiate(tile, new Vector3(startX + (xOffset * x), startY + (yOffset * y), 0), tile.transform.rotation);
                 tiles[x, y] = newTile;
                 newTile.transform.parent = transform; // Add this line
@@ -94,13 +148,13 @@ public class BoardManager : MonoBehaviour
 
         if (playerTileTemplate != null)
         {
-            int xMedian = xSize / 2;
-            int yMedian = ySize / 2;
+            int xPlayerStartPos = playerStartCoordinates.x;
+            int yPlayerStartPos = playerStartCoordinates.y;
 
-            playerTile = Instantiate(playerTileTemplate, tiles[xMedian, yMedian].transform.position, playerTileTemplate.transform.rotation);
+            playerTile = Instantiate(playerTileTemplate, tiles[xPlayerStartPos, yPlayerStartPos].transform.position, playerTileTemplate.transform.rotation);
             playerTile.transform.parent = transform;
-            DestroyImmediate(tiles[xMedian, yMedian].gameObject);
-            tiles[xMedian, yMedian] = playerTile;
+            DestroyImmediate(tiles[xPlayerStartPos, yPlayerStartPos].gameObject);
+            tiles[xPlayerStartPos, yPlayerStartPos] = playerTile;
         }
     }
 
@@ -157,6 +211,7 @@ public class BoardManager : MonoBehaviour
 
     public IEnumerator FindNullTiles()
     {
+        // interrupt for player movement
         Vector2Int playerPos = GetCoordinates(playerTile);
 
         if (tiles[(int)playerPos.x, (int)playerPos.y].GetAllAdjacentTiles().Exists(t => t != null && t.spriteRenderer.sprite == emptySprite))
