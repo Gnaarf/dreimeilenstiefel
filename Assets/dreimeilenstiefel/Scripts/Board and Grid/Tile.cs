@@ -59,7 +59,7 @@ public class Tile : MonoBehaviour
         if (BoardManager.instance.IsPlayerMoving)
         {
             print(spriteRenderer.sprite.name);
-            if (spriteRenderer.sprite == BoardManager.instance.emptySprite)
+            if (spriteRenderer.sprite == BoardManager.instance.movableSprite)
             {
                 BoardManager.instance.MovingPlayerTarget = this;
             }
@@ -90,9 +90,20 @@ public class Tile : MonoBehaviour
                     GUIManager.instance.MoveCounter--; // Add this line here
 
                     BoardManager.instance.SwapTiles(this, previousSelected);
-                    previousSelected.ClearAllMatches();
+
+                    Vector2[] vert = new Vector2[2] { Vector2.up, Vector2.down };
+                    Vector2[] hori = new Vector2[2] { Vector2.left, Vector2.right };
+                    if (BoardManager.instance.cheatMode || CheckIfMatchExists(vert) || CheckIfMatchExists(hori) || previousSelected.CheckIfMatchExists(vert) || previousSelected.CheckIfMatchExists(hori) )
+                    {
+                        previousSelected.ClearAllMatches();
+                        ClearAllMatches();
+                    }
+                    else
+                    {
+                        BoardManager.instance.SwapTiles(this, previousSelected);
+                        SFXManager.instance.PlaySFX(Clip.Duck);
+                    }
                     previousSelected.Deselect();
-                    ClearAllMatches();
 
                 }
                 else
@@ -102,6 +113,14 @@ public class Tile : MonoBehaviour
                 }
             }
         }
+    }
+
+
+    private bool CheckIfMatchExists(Vector2[] paths)
+    {
+        List<GameObject> matchingTiles = new List<GameObject>();
+        for (int i = 0; i < paths.Length; i++) { matchingTiles.AddRange(FindMatch(paths[i])); }
+        return matchingTiles.Count >= 2;
     }
 
     private Tile GetAdjacent(Vector2 castDir)
@@ -114,12 +133,27 @@ public class Tile : MonoBehaviour
         return null;
     }
 
+    public List<Tile> GetAllAdjacentTiles(bool includeNullTiles = true)
+    {
+        List<Tile> adjacentTiles = new List<Tile>();
+        for (int i = 0; i < adjacentDirections.Length; i++)
+        {
+            Tile tile = GetAdjacent(adjacentDirections[i]);
+            if(includeNullTiles || tile != null)
+            {
+                adjacentTiles.Add(tile);
+            }
+        }
+        return adjacentTiles;
+    }
+
     public List<Tile> GetAllAdjacentTiles()
     {
         List<Tile> adjacentTiles = new List<Tile>();
         for (int i = 0; i < adjacentDirections.Length; i++)
         {
-            adjacentTiles.Add(GetAdjacent(adjacentDirections[i]));
+            Tile tile = GetAdjacent(adjacentDirections[i]);
+                adjacentTiles.Add(tile);
         }
         return adjacentTiles;
     }
@@ -155,6 +189,8 @@ public class Tile : MonoBehaviour
     {
         if (spriteRenderer.sprite == BoardManager.instance.emptySprite)
             return;
+
+        matchFound = false;
 
         ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
         ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
