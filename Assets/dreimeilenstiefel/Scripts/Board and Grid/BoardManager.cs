@@ -27,7 +27,7 @@ using System.Collections.Generic;
 public class BoardManager : MonoBehaviour {
 	public static BoardManager instance;
     public Tile playerTileTemplate;
-    public Tile playerTile;
+    public Tile playerTile { get; set; }
     public Sprite emptySprite;
 	public List<Sprite> characters = new List<Sprite>();
 	public Tile tile;
