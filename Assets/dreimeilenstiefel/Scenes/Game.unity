@@ -498,7 +498,7 @@ GameObject:
   - component: {fileID: 1729758307}
   - component: {fileID: 1729758306}
   m_Layer: 0
-  m_Name: Background (1)
+  m_Name: Background-Slice1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -717,6 +717,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   housePrefab: {fileID: 8524094288156415711, guid: afdf24862c2e30a49892a70a4dbb14f8,
     type: 3}
+  stepSize: 0.7680001
 --- !u!1001 &2090950291
 PrefabInstance:
   m_ObjectHideFlags: 0
