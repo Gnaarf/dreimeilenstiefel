@@ -445,6 +445,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 047b929beb10565479851d39b452dfb6,
         type: 3}
+    - target: {fileID: 114000013070421562, guid: 5c55d6b169136be438c65bd97e4f3a67,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: HowToPlay
+      objectReference: {fileID: 0}
     - target: {fileID: 114000011935413962, guid: 5c55d6b169136be438c65bd97e4f3a67,
         type: 3}
       propertyPath: m_Sprite
