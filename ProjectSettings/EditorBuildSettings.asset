@@ -12,18 +12,18 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 1
     path: Assets/dreimeilenstiefel/Scenes/Menu.unity
     guid: 808e4492450f3f84c859e099524ef107
-  - enabled: 0
+  - enabled: 1
     path: Assets/dreimeilenstiefel/Scenes/Game.unity
     guid: 13c4b9a25e714484db0951847e444521
-  - enabled: 0
+  - enabled: 1
     path: Assets/dreimeilenstiefel/Scenes/Credits.unity
     guid: 714541a0a4b92114a86e18c50f378a9b
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   m_configObjects: {}
